@@ -200,6 +200,26 @@ docker system prune -a   # Elimina todo lo no usado en Docker
 xcrun simctl delete unavailable # Elimina simuladores de iOS viejos
 ```
 
+**Purgar Espacio en Disco (Snapshots locales)**
+El espacio "Purgable" suele estar ocupado por instantáneas locales de Time Machine.
+```bash
+tmutil listlocalsnapshots /              # Listar snapshots
+# Método 1 (Estándar): Eliminar snapshots
+for d in $(tmutil listlocalsnapshots / | grep -oE '[0-9]+-[0-9]+-[0-9]+-[0-9]+'); do sudo tmutil deletelocalsnapshots $d; done
+```
+
+**Método 2 (Agresivo - Si el espacio no se libera)**
+Si macOS no libera el espacio "Purgable" (cachés, swap), puedes forzarlo creando un archivo gigante hasta llenar el disco y luego borrándolo. El sistema borrará automáticamente lo purgable para hacer espacio.
+```bash
+dd if=/dev/zero of=~/borrame.file bs=15m    # Crea un archivo hasta llenar el disco (Ctrl+C cuando diga 'No space')
+rm ~/borrame.file                           # Bórralo inmediatamente
+```
+
+**Purgar Memoria RAM**
+```bash
+sudo purge  # Libera memoria RAM inactiva (requiere contraseña)
+```
+
 ## Crear Atajos Personalizados (Aliases)
 
 Puedes crear tus propios comandos cortos para sustituir los largos.

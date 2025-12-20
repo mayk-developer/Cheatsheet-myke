@@ -17,5 +17,9 @@ Colección de guías rápidas para herramientas esenciales de desarrollo.
 - [[n8n]] - Automatización de flujos de trabajo con Docker/OrbStack.
 - [[Sql]] - Consultas, Joins, Normalización y Funciones de Ventana.
 
+- [[Excel]] - Fórmulas avanzadas, tablas dinámicas y atajos Mac.
+- [[GoogleSheets]] - Funciones cloud (QUERY, IMPORTRANGE) y colaboración.
+- [[GoogleDocs]] - Redacción, formato inteligente y atajos.
+
 ---
 *Nota: Estos archivos se encuentran en la carpeta `CheatSheets`.*
