@@ -1,166 +1,158 @@
-# Cheat Sheet: Docker
+# 🐳 Cheat Sheet: Docker
 
-Guía rápida para la gestión de contenedores e imágenes con Docker.
+Guía rápida para dominar contenedores e imágenes.
 
-## Gestión de Imágenes
+---
 
-**Construir imagen**
+## 1. Conceptos Fundamentales
+
+Docker empaqueta tu app y sus cosas para que corra igual en todos lados.
+
+```mermaid
+graph LR
+    A[📄 Dockerfile] -->|build| B[📦 Image]
+    B -->|run| C[🚀 Container]
+    C -->|logs| D[📝 Output]
+    style B fill:#fff3e0,stroke:#ff9800
+    style C fill:#e3f2fd,stroke:#2196f3
+    style D fill:#e8f5e9,stroke:#4caf50
+```
+
+---
+
+## 2. Gestión de Imágenes (Build)
+
+La "receta" de tu aplicación.
+
 ```bash
+# Construir imagen con tag
 docker build -t mi-app:v1 .
-docker build -f Dockerfile.dev -t mi-app:dev . # Usar otro Dockerfile
+
+# Construir especificando archivo
+docker build -f Dockerfile.dev -t mi-app:dev .
 ```
 
-**Descargar imagen**
+| Comando | Acción |
+| :--- | :--- |
+| `docker images` | Listar imágenes locales. |
+| `docker pull <img:tag>` | Descargar imagen (ej. `python:3.9`). |
+| `docker rmi <id>` | Eliminar imagen. |
+| `docker image prune` | 🧹 Limpiar imágenes "sueltas" (dangling). |
+
+---
+
+## 3. Gestión de Contenedores (Run)
+
+Tus imágenes en ejecución.
+
+> [!TIP] El comando mágico
+> ```bash
+> docker run -d -p 8080:80 --name mi-web nginx
+> ```
+> *   `-d`: Detached (segundo plano).
+> *   `-p`: Puerto `Host:Contenedor`.
+> *   `--name`: Nombre fácil de recordar.
+
+### Estado y Control
+| Acción | Comando |
+| :--- | :--- |
+| **Listar Activos** | `docker ps` |
+| **Listar Todos** | `docker ps -a` |
+| **Detener** | `docker stop <nombre>` |
+| **Iniciar** | `docker start <nombre>` |
+| **Entrar (Shell)** | `docker exec -it <nombre> bash` |
+| **Ver Logs** | `docker logs -f <nombre>` |
+
+> [!WARNING] Borrar todo
+> Eliminar todos los contenedores detenidos y en ejecución (¡Cuidado!):
+> ```bash
+> docker rm -f $(docker ps -aq)
+> ```
+
+---
+
+## 4. Volúmenes y Persistencia
+
+Si el contenedor muere, los datos mueren... ¡a menos que uses volúmenes!
+
 ```bash
-docker pull python:3.9
-docker pull postgres:alpine
+# Volumen nombrado (Persistente, gestionado por Docker)
+docker run -v mi-data:/var/lib/mysql mysql
+
+# Bind Mount (Carpeta local específica)
+docker run -v $(pwd)/src:/app/src node
 ```
 
-**Listar y Eliminar**
+*   `docker volume ls`: Listar volúmenes.
+*   `docker volume create`: Crear uno manualmente.
+*   `docker volume prune`: Borrar volúmenes no usados (⚠️ destructivo).
+
+---
+
+## 5. Redes (Networking)
+
+Conectar contenedores entre sí por nombre.
+
 ```bash
-docker images
-docker rmi mi-app:v1
-docker image prune  # Eliminar imágenes sin etiqueta (dangling)
-```
-
-## Gestión de Contenedores
-
-**Ejecutar contenedor**
-```bash
-docker run hello-world
-docker run -it ubuntu bash  # Interactivo
-```
-
-**Ejecutar en segundo plano (Detached)**
-```bash
-docker run -d -p 8080:80 --name mi-web nginx
-# -d: Detached
-# -p: Puerto host:contenedor
-# --name: Nombre personalizado
-```
-
-**Listar contenedores**
-```bash
-docker ps      # En ejecución
-docker ps -a   # Todos
-docker ps -q   # Solo IDs
-```
-
-**Controlar estado**
-```bash
-docker stop mi-web
-docker start mi-web
-docker restart mi-web
-```
-
-**Eliminar**
-```bash
-docker rm mi-web
-docker rm -f mi-web  # Forzar si está corriendo
-docker rm $(docker ps -aq) # Eliminar TODOS (¡Cuidado!)
-```
-
-## Logs y Ejecución
-
-**Ver logs**
-```bash
-docker logs mi-web
-docker logs -f mi-web  # Seguir en tiempo real
-docker logs --tail 100 mi-web # Últimas 100 líneas
-```
-
-**Ejecutar comando en contenedor activo**
-```bash
-docker exec -it mi-web bash
-docker exec -it mi-db psql -U user  # Ejemplo postgres
-```
-
-## Redes (Networks)
-
-**Gestión de redes**
-```bash
-docker network ls
 docker network create mi-red
-docker network inspect mi-red
+docker run --network mi-red --name db mysql
+docker run --network mi-red --name api mi-app
+# Ahora 'api' puede conectarse a 'db' usando el host "db"
 ```
 
-**Conectar contenedor a red**
-```bash
-docker run --network mi-red ...
-docker network connect mi-red mi-contenedor
+---
+
+## 6. Docker Compose 🐙
+
+Orquestar múltiples contenedores (La forma profesional de desarrollar).
+
+**Ejemplo `docker-compose.yml`:**
+```yaml
+version: '3.8'
+services:
+  web:
+    build: .
+    ports: ["3000:3000"]
+    depends_on: [db]
+  db:
+    image: postgres:15
+    volumes: [postgres_data:/var/lib/postgresql/data]
+
+volumes:
+  postgres_data:
 ```
 
-## Volúmenes (Volumes)
+### Comandos Compose
+| Comando | Acción |
+| :--- | :--- |
+| `docker-compose up -d` | Levantar todo en segundo plano. |
+| `docker-compose down` | Apagar y borrar contenedores/redes. |
+| `docker-compose logs -f` | Ver logs de todos los servicios. |
+| `docker-compose build` | Reconstruir imágenes si cambió el código. |
 
-**Gestión de volúmenes**
-```bash
-docker volume ls
-docker volume create mi-data
-docker volume inspect mi-data
-docker volume prune  # Eliminar no usados
-```
+---
 
-**Usar volúmenes**
-```bash
-docker run -v mi-data:/var/lib/mysql ...  # Volumen nombrado
-docker run -v $(pwd)/data:/app/data ...   # Bind mount (carpeta local)
-```
+## 7. Limpieza Profunda 🧹
 
-## Dockerfile Básico
+Cuando tu disco se llena...
 
-Ejemplo de estructura común:
+> [!DANGER] Zona de Peligro
+> **Docker System Prune** borra:
+> 1.  Contenedores detenidos
+> 2.  Redes no usadas
+> 3.  Imágenes "dangling" (sin nombre)
+> 4.  Caché de construcción
+>
+> ```bash
+> docker system prune -a --volumes
+> ```
 
-```dockerfile
-# Imagen base
-FROM node:18-alpine
+---
 
-# Directorio de trabajo
-WORKDIR /app
+## 8. Debugging
 
-# Copiar dependencias primero (para aprovechar caché)
-COPY package*.json ./
+Herramientas para cuando las cosas fallan.
 
-# Instalar dependencias
-RUN npm install
-
-# Copiar código fuente
-COPY . .
-
-# Exponer puerto
-EXPOSE 3000
-
-# Comando de inicio
-CMD ["npm", "start"]
-```
-
-## Docker Compose
-
-**Comandos básicos**
-```bash
-docker-compose up        # Iniciar (bloquea terminal)
-docker-compose up -d     # Iniciar en segundo plano
-docker-compose down      # Detener y borrar todo
-docker-compose down -v   # Borrar también volúmenes
-```
-
-**Gestión**
-```bash
-docker-compose logs -f
-docker-compose ps
-docker-compose restart servicio
-docker-compose build     # Reconstruir imágenes
-```
-
-## Limpieza del Sistema
-
-**Prune (Limpieza general)**
-```bash
-docker system prune      # Borra contenedores parados, redes sin usar, etc.
-docker system prune -a   # Borra TAMBIÉN imágenes no usadas
-```
-
-**Inspección**
-```bash
-docker inspect mi-contenedor  # Ver toda la info (JSON)
-docker stats                  # Ver uso de CPU/Memoria en vivo
-```
+*   `docker inspect <id>`: Ver toda la metadata (IP, volúmenes, env vars) en JSON.
+*   `docker stats`: Monitor de recursos (CPU/RAM) en tiempo real.
+*   `docker history <imagen>`: Ver las capas y comandos que formaron la imagen.

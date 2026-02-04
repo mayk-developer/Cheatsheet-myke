@@ -1,261 +1,410 @@
-# Cheat Sheet: Git
+# 🐙 Guía Completa de Git + GitHub
 
-Guía esencial para el control de versiones con Git.
+Control de versiones desde cero
 
-## Configuración Inicial
+---
 
-**Configurar usuario**
-```bash
-git config --global user.name "Tu Nombre"
-git config --global user.email "email@example.com"
+## 💡 ¿Qué es Git?
+
+Git es un sistema de **control de versiones**. Imagina que es como un "historial de cambios" muy poderoso para tu código.
+
+| ❌ Sin Git | ✅ Con Git |
+| :--- | :--- |
+| proyecto_final.zip<br>proyecto_final_v2.zip<br>proyecto_FINAL_REAL.zip<br>proyecto_AHORA_SI.zip<br>proyecto_backup_mayo.zip | 📁 proyecto/<br>└── Todo el historial guardado automáticamente con mensajes descriptivos |
+
+> [!TIP] 💡 Git vs GitHub
+> *   **Git** = Herramienta en tu computadora
+> *   **GitHub** = Sitio web para guardar tu código en la nube y colaborar
+
+---
+
+## 📚 Conceptos clave
+
+### Las 4 áreas de Git
+
+```mermaid
+graph LR
+    A["📁 Working Dir"] -->|git add| B["📋 Staging Area"]
+    B -->|git commit| C["💾 Local Repo"]
+    C -->|git push| D["☁️ Remote (GitHub)"]
+    style B fill:#fff3e0,stroke:#ff9800
+    style C fill:#e3f2fd,stroke:#2196f3
+    style D fill:#f3e5f5,stroke:#9c27b0
 ```
 
-**Ver configuración**
+| Término | ¿Qué es? |
+| :--- | :--- |
+| **Repository (Repo)** | Tu proyecto con todo su historial de cambios |
+| **Commit** | Una "foto" de tu código en un momento específico |
+| **Branch (Rama)** | Una línea paralela de desarrollo |
+| **Merge** | Unir dos ramas |
+| **Clone** | Copiar un repo de GitHub a tu máquina |
+| **Pull** | Traer cambios de GitHub a tu máquina |
+| **Push** | Enviar tus commits a GitHub |
+
+---
+
+## 1. Instalar Git
+
+| Sistema | Cómo instalar |
+| :--- | :--- |
+| **Windows** | Descarga de `git-scm.com` → Ejecuta el instalador |
+| **macOS** | `brew install git` o instala Xcode Command Line Tools |
+| **Linux (Ubuntu)** | `sudo apt install git` |
+
+**Verificar instalación:**
 ```bash
+git --version
+# Output: git version 2.43.0
+```
+
+---
+
+## 2. Configuración inicial (solo una vez)
+
+Configura tu nombre y email (aparecerán en tus commits):
+
+```bash
+# Tu nombre
+git config --global user.name "Tu Nombre"
+
+# Tu email (usa el mismo de GitHub)
+git config --global user.email "tu@email.com"
+
+# Verificar configuración
 git config --list
 ```
 
-## Iniciar y Clonar
+> [!TIP] 💡 Opcional pero recomendado:
+> ```bash
+> # Rama por defecto "main" en lugar de "master"
+> git config --global init.defaultBranch main
+> 
+> # Editor por defecto (VS Code)
+> git config --global core.editor "code --wait"
+> ```
 
-**Nuevo repositorio**
+---
+
+## 3. Crear cuenta en GitHub
+
+1.  Ve a **github.com**
+2.  Haz clic en **"Sign up"**
+3.  Ingresa tu email, crea una contraseña y username
+4.  Verifica tu email
+
+> [!INFO] ℹ️ Tu username de GitHub:
+> *   Será parte de tu URL: `github.com/tu-username`
+> *   Elige algo profesional si lo usarás para trabajo
+> *   Se puede cambiar después (pero no es recomendado)
+
+---
+
+## 4. Tu primer repositorio
+
+**Opción A: Empezar un proyecto nuevo desde cero**
+
 ```bash
+# 1. Crear carpeta del proyecto
+mkdir mi-proyecto
+cd mi-proyecto
+
+# 2. Inicializar Git
 git init
+# Output: Initialized empty Git repository in /mi-proyecto/.git/
+
+# 3. Crear un archivo
+echo "# Mi Proyecto" > README.md
+
+# 4. Agregar archivos al staging
+git add README.md
+# O agregar TODO:
+git add .
+
+# 5. Hacer tu primer commit
+git commit -m "Primer commit"
 ```
 
-**Clonar repositorio**
+**Opción B: Clonar un repo existente de GitHub**
+
 ```bash
-git clone https://github.com/usuario/repo.git
-git clone https://github.com/usuario/repo.git nombre_carpeta
+# Clonar un repositorio
+git clone https://github.com/usuario/nombre-repo.git
+
+# Entrar a la carpeta
+cd nombre-repo
 ```
 
-## Flujo de Trabajo Básico
+---
 
-**Ver estado**
+## 5. Conectar con GitHub
+
+**Paso 1: Crear repositorio en GitHub**
+1.  Ve a **github.com** → Haz clic en **"+"** → **"New repository"**
+2.  Nombre: `mi-proyecto`
+3.  Deja las demás opciones por defecto
+4.  Haz clic en **"Create repository"**
+
+**Paso 2: Conectar tu repo local con GitHub**
+
 ```bash
-git status
-```
+# Agregar el repositorio remoto
+git remote add origin https://github.com/TU-USUARIO/mi-proyecto.git
 
-**Añadir cambios (Staging)**
-```bash
-git add archivo.txt
-git add .  # Añadir todo
-```
-
-**Guardar cambios (Commit)**
-```bash
-git commit -m "Mensaje descriptivo"
-git commit -am "Añadir y commit de archivos modificados"
-```
-
-## Gestión de Ramas (Branches)
-
-**Listar y Crear**
-```bash
-git branch        # Listar locales
-git branch -a     # Listar todas (incluyendo remotas)
-git branch nueva-rama  # Crear rama
-```
-
-**Cambiar de rama**
-```bash
-git checkout nombre-rama
-git switch nombre-rama  # Alternativa moderna
-```
-
-**Crear y cambiar**
-```bash
-git checkout -b nueva-rama
-```
-
-**Fusionar (Merge)**
-```bash
-git merge rama-a-fusionar
-```
-
-**Eliminar rama**
-```bash
-git branch -d nombre-rama  # Si ya está fusionada
-git branch -D nombre-rama  # Forzar eliminación
-```
-
-## Repositorios Remotos
-
-**Gestionar remotos**
-```bash
+# Verificar que se agregó
 git remote -v
-git remote add origin https://github.com/user/repo.git
+
+# Subir tu código a GitHub (primera vez)
+git push -u origin main
 ```
 
-**Sincronizar**
+> [!WARNING] ⚠️ ¿Te pide usuario/contraseña?
+> GitHub ya no acepta contraseñas. Necesitas un **Personal Access Token**:
+> 1.  GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+> 2.  Generate new token → Selecciona permisos "repo"
+> 3.  Copia el token y úsalo como contraseña
+
+---
+
+## 6. Flujo de trabajo diario
+
+Este es el ciclo que repetirás constantemente:
+
+**1. Modificas** → **2. git add** → **3. git commit** → **4. git push**
+
 ```bash
-git fetch origin        # Descargar cambios sin fusionar
-git pull origin main    # Descargar y fusionar
-git push origin main    # Subir cambios
-git push -u origin main # Subir y establecer upstream
-```
+# 1. Ver qué archivos cambiaron
+git status
 
-## Deshacer Cambios
+# 2. Agregar archivos modificados
+git add .                    # Todos los archivos
+git add archivo.js           # Un archivo específico
 
-**Descartar cambios locales**
-```bash
-git restore archivo.txt
-git checkout -- archivo.txt  # Versión antigua
-```
+# 3. Crear commit con mensaje descriptivo
+git commit -m "Agrega función de login"
 
-**Sacar del staging (Unstage)**
-```bash
-git restore --staged archivo.txt
-git reset HEAD archivo.txt
-```
+# 4. Subir a GitHub
+git push
 
-**Deshacer commits**
-```bash
-git reset --soft HEAD~1  # Deshace commit, mantiene cambios en staging
-git reset --hard HEAD~1  # Deshace commit y BORRA cambios
-git revert <commit-hash> # Crea nuevo commit invirtiendo cambios
-```
-
-## Historial y Logs
-
-**Ver historial**
-```bash
-git log
+# Extra: Ver historial de commits
 git log --oneline
-git log --graph --oneline --all  # Gráfico visual
 ```
 
-**Ver diferencias**
+> [!TIP] 💡 Buenos mensajes de commit:
+> *   ✅ "Agrega validación de email en formulario"
+> *   ✅ "Corrige bug de login con espacios"
+> *   ✅ "Actualiza dependencias de seguridad"
+> *   ❌ "Cambios"
+> *   ❌ "asdfasdf"
+> *   ❌ "WIP"
+
+---
+
+## 7. Trabajar con ramas (branches)
+
+Las ramas te permiten trabajar en features sin afectar el código principal.
+
+**Visualización de ramas**
+
+```mermaid
+gitGraph
+    commit
+    branch feature/login
+    checkout feature/login
+    commit
+    commit
+    checkout main
+    merge feature/login
+    commit
+```
+
 ```bash
-git diff            # Working directory vs Staging
-git diff --staged   # Staging vs Último commit
+# Ver ramas existentes
+git branch
+
+# Crear nueva rama
+git branch feature/login
+
+# Cambiar a esa rama
+git checkout feature/login
+
+# O crear y cambiar en un solo comando
+git checkout -b feature/login
+
+# Trabajar normalmente...
+git add .
+git commit -m "Implementa formulario de login"
+
+# Subir la rama a GitHub
+git push -u origin feature/login
+
+# Volver a main
+git checkout main
+
+# Unir los cambios de la rama a main
+git merge feature/login
+
+# Eliminar rama (ya no la necesitas)
+git branch -d feature/login
 ```
 
-## Stashing (Guardado Temporal)
+> [!INFO] ℹ️ Nombres de ramas comunes:
+> *   `feature/nombre` → Nueva funcionalidad
+> *   `fix/nombre` → Corrección de bug
+> *   `hotfix/nombre` → Corrección urgente
+> *   `develop` → Rama de desarrollo
 
-**Guardar y recuperar**
+---
+
+## 8. Traer cambios de GitHub
+
+Cuando otros (o tú desde otra computadora) hacen cambios:
+
 ```bash
-git stash           # Guardar temporalmente
-git stash list      # Ver lista
-git stash pop       # Aplicar y borrar el último
-git stash apply     # Aplicar sin borrar
+# Traer y fusionar cambios de GitHub
+git pull
+
+# O separar en dos pasos:
+git fetch              # Descarga cambios sin fusionar
+git merge origin/main  # Fusiona los cambios
 ```
 
-## Avanzado: Rebase y Cherry-pick
+> [!WARNING] ⚠️ Buena práctica:
+> Siempre haz `git pull` antes de empezar a trabajar para tener la última versión.
 
-**Rebase (Reescribir historia)**
+---
+
+## 9. Resolver conflictos
+
+Ocurren cuando dos personas modifican la misma línea de código.
+
 ```bash
-git checkout feature
-git rebase main     # Pone tus cambios sobre lo último de main
+# Git te mostrará algo así en el archivo:
+<<<<<<< HEAD
+Tu código local
+=======
+Código de GitHub
+>>>>>>> origin/main
 ```
 
-**Rebase Interactivo (Limpiar commits)**
+**Cómo resolverlo:**
+1.  Abre el archivo con conflicto
+2.  Decide qué código conservar (o combínalos)
+3.  Elimina las líneas `<<<`, `===`, `>>>`
+4.  Guarda el archivo
+5.  Haz commit:
+
 ```bash
-git rebase -i HEAD~3  # Modificar los últimos 3 commits
+git add .
+git commit -m "Resuelve conflicto en archivo.js"
 ```
 
-**Cherry-pick (Copiar commit específico)**
+> [!TIP] 💡 VS Code ayuda:
+> VS Code detecta conflictos y te muestra botones para aceptar los cambios de un lado u otro.
+
+---
+
+## 10. Deshacer cambios
+
+| Situación | Comando |
+| :--- | :--- |
+| Descartar cambios en un archivo (no guardado) | `git checkout -- archivo.js` |
+| Quitar archivo del staging (después de add) | `git reset archivo.js` |
+| Deshacer último commit (mantener cambios) | `git reset --soft HEAD~1` |
+| Deshacer último commit (borrar cambios) | `git reset --hard HEAD~1` |
+| Crear commit que revierte otro | `git revert <commit-id>` |
+
+> [!CAUTION] 🚨 Cuidado con --hard:
+> Borra los cambios permanentemente. Úsalo solo si estás seguro.
+
+---
+
+## 11. Archivo .gitignore
+
+Lista de archivos que Git debe ignorar (no subir a GitHub).
+
 ```bash
-git cherry-pick <commit-hash>  # Aplica un commit de otra rama a la actual
-```
+# Crear archivo .gitignore en la raíz del proyecto
 
-## Etiquetas (Tags)
-
-**Crear etiquetas**
-```bash
-git tag v1.0.0
-git tag -a v1.0.0 -m "Versión 1.0.0"
-git push origin v1.0.0
-```
-
-## Ignorar Archivos (.gitignore)
-
-Crear un archivo `.gitignore` en la raíz para excluir archivos:
-```gitignore
+# Dependencias
 node_modules/
+vendor/
+__pycache__/
+
+# Variables de entorno (¡IMPORTANTE!)
 .env
-*.log
+.env.local
+*.env
+
+# Archivos del sistema
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Carpetas de build
+dist/
+build/
+.next/
+
+# IDEs
+.idea/
+.vscode/
 ```
 
-## Salvavidas
+> [!CAUTION] 🚨 NUNCA subas a GitHub:
+> *   Archivos `.env` con claves secretas
+> *   API keys, passwords, tokens
+> *   Credenciales de base de datos
 
-**Reflog (Recuperar lo perdido)**
-```bash
-git reflog  # Muestra TODOS los movimientos de HEAD
-# Luego puedes hacer git reset --hard <hash-del-reflog> para volver a ese punto
-```
+---
 
-## Resolución de Conflictos
+## 📋 Comandos de referencia rápida
 
-1. Identificar archivos en conflicto con `git status`.
-2. Abrir archivos y buscar marcas `<<<<<<<`, `=======`, `>>>>>>>`.
-3. Editar para dejar el código deseado.
-4. Añadir al staging: `git add archivo_resuelto.txt`.
-5. Finalizar: `git commit`.
+| Comando | Descripción |
+| :--- | :--- |
+| `git init` | Inicializa un repositorio nuevo |
+| `git clone URL` | Clona un repositorio de GitHub |
+| `git status` | Ver estado de archivos |
+| `git add .` | Agregar todos los archivos al staging |
+| `git commit -m "msg"` | Crear commit con mensaje |
+| `git push` | Subir commits a GitHub |
+| `git pull` | Traer cambios de GitHub |
+| `git branch` | Listar ramas |
+| `git checkout -b nombre` | Crear y cambiar a nueva rama |
+| `git merge rama` | Fusionar rama actual con otra |
+| `git log --oneline` | Ver historial de commits |
+| `git diff` | Ver cambios no guardados |
+| `git stash` | Guardar cambios temporalmente |
+| `git stash pop` | Recuperar cambios guardados |
+| `git remote -v` | Ver repositorios remotos |
 
-## Casuísticas y Trucos Avanzados
+---
 
-### Traer un archivo específico de otra rama
-Recuperar o traer solo un archivo desde otra rama sin fusionar toda la rama.
-```bash
-# Trae el archivo y lo deja en Stage (listo para commit)
-git checkout nombre-rama -- ruta/al/archivo.ext
+## ✓ Checklist del principiante
 
-# Versión moderna (más explicita)
-git restore --source nombre-rama -- ruta/al/archivo.ext
-```
+- [ ] Instalé Git en mi computadora
+- [ ] Configuré mi nombre y email con git config
+- [ ] Creé mi cuenta de GitHub
+- [ ] Creé mi primer repositorio local con git init
+- [ ] Hice mi primer commit
+- [ ] Conecté con GitHub (git remote add)
+- [ ] Subí mi código con git push
+- [ ] Creé un archivo .gitignore
+- [ ] Practiqué crear y fusionar ramas
+- [ ] Entiendo el flujo: add → commit → push
 
-### Modificar el último commit (Amend)
-Útil si olvidaste añadir un archivo o quieres cambiar el mensaje del último commit *que aún no has subido*.
-```bash
-# Añade cambios olvidados al último commit
-git add archivo-olvidado.txt
-git commit --amend --no-edit  # Mantiene el mensaje original
+---
 
-# Cambiar solo el mensaje
-git commit --amend -m "Nuevo mensaje corregido"
-```
+## 🔧 Errores comunes y soluciones
 
-### Unificar Commits (Squash)
-Combinar múltiples commits en uno solo antes de fusionar.
-```bash
-# Al fusionar una rama, aplasta todo su historial en un solo commit en tu rama actual
-git merge --squash feature-branch
-git commit -m "Implementar feature completa"
-```
-
-### Limpiar área de trabajo (Clean)
-Eliminar archivos no rastreados (untracked) que no quieres (ej. archivos de build generados).
-```bash
-git clean -n   # (Dry Run) Muestra qué se borraría
-git clean -fd  # (Force Directory) Borra archivos y directorios no rastreados
-```
-
-### Investigación y Depuración
-Herramientas para encontrar culpables o errores.
-```bash
-# Ver quién modificó cada línea de un archivo
-git blame archivo.txt
-
-# Búsqueda binaria para encontrar el commit que introdujo un bug
-git bisect start
-git bisect bad HEAD    # La versión actual está mal
-git bisect good <hash> # Esta versión antigua estaba bien
-# ... Git te moverá entre commits ...
-git bisect reset       # Terminar
-```
-
-### Alias Útiles
-Comandos cortos para ahorrar tiempo. Configúralos una vez:
-```bash
-git config --global alias.co checkout
-git config --global alias.br branch
-git config --global alias.ci commit
-git config --global alias.st status
-git config --global alias.lg "log --oneline --graph --all"
-
-# Uso:
-git co main
-git st
-git lg
-```
+| Error | Solución |
+| :--- | :--- |
+| "fatal: not a git repository" | No estás en una carpeta con Git. Usa `git init` o entra a la carpeta correcta |
+| "failed to push some refs" | Hay cambios en GitHub que no tienes. Haz `git pull` primero |
+| "Permission denied (publickey)" | Configura SSH keys o usa HTTPS con token |
+| "Your branch is ahead of origin" | Tienes commits locales sin subir. Haz `git push` |
+| "CONFLICT: Merge conflict" | Edita los archivos manualmente y luego `git add` + `git commit` |
+| "Changes not staged for commit" | Olvidaste hacer `git add` antes del commit |

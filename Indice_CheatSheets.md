@@ -20,6 +20,10 @@ Colección de guías rápidas para herramientas esenciales de desarrollo.
 - [[Excel]] - Fórmulas avanzadas, tablas dinámicas y atajos Mac.
 - [[GoogleSheets]] - Funciones cloud (QUERY, IMPORTRANGE) y colaboración.
 - [[GoogleDocs]] - Redacción, formato inteligente y atajos.
+- [[GoogleAppsScript]] - Automatización de notificaciones y scripts para Drive.
+- [[CloudRun]] - Despliegue, gestión de tráfico y contenedores serverless en GCP.
+- [[Firebase]] - Configuración de Firestore, CRUD y reglas de seguridad.
+- [[CiCdCloudRun]] - Pipeline automático GitHub -> Cloud Run.
 
 ---
 *Nota: Estos archivos se encuentran en la carpeta `CheatSheets`.*
