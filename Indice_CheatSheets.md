@@ -13,7 +13,7 @@ Colección de guías rápidas para herramientas esenciales de desarrollo.
 - [[CSS]] - Flexbox, Grid, Container Queries y nuevas features.
 - [[Javascript]] - Guía moderna de JavaScript (ES6+, Async, etc.).
 - [[React]] - Hooks (useState, useEffect), Custom Hooks y ecosistema.
-- [[Python]] - Tipado, Dataclasses, Async y características modernas (3.10+).
+- [[Python]] - Guía completa desde cero: Tipos, POO, Archivos, Entornos y más.
 - [[n8n]] - Automatización de flujos de trabajo con Docker/OrbStack.
 - [[Sql]] - Consultas, Joins, Normalización y Funciones de Ventana.
 
